@@ -6,10 +6,22 @@ import Empty from "../components/Empty";
 import ErrorFetch from "../components/ErrorFetch";
 import Goals from "../data/goals";
 const Ongoing = () => {
-  const ongoingGoals = Goals.filter((g) => g.progress < 100);
+  // const ongoingGoals = Goals.filter((g) => g.progress < 100);
+  const url ="https://goalapitonye.onrender.com/api/goals"
+  const {isLoading, isError, data:{goals : Goals} } = useFetch(url)
+  const ongoingGoals = isLoading || isError ? null : Goals.filter((g)=> g.progress < 100)
+  if ( !isLoading && isError) {
+    return <ErrorFetch/>
+  }
+
+  if (!isLoading && ongoingGoals.length < 1 ) {
+    return <Empty/>
+  }
   return (
     <div className="container mt-2">
       <GoalHeader heading="Ongoing" />
+      {isLoading && <Loading/> }
+      
       <div>
         {Goals &&
           ongoingGoals.map((g) => {
